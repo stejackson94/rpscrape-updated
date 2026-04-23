@@ -5,7 +5,7 @@
 # Fetch stats from the accordion (jockey/trainer/horse stats)
 fetch_stats = false
 
-# Fetch detailed horse profiles 
+# Fetch detailed horse profiles
 # Required for: profile, sex, trainer_14_days, trainer_location, prev_trainers, prev_owners, medical, quotes, stable_tour
 fetch_profiles = false
 

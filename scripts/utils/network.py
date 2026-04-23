@@ -10,14 +10,14 @@ class Persistent406Error(Exception):
 
 
 BROWSERS: Sequence[BrowserTypeLiteral] = (
-    'edge',
-    'chrome',
-    'firefox',
-    'safari',
+    "edge",
+    "chrome",
+    "firefox",
+    "safari",
 )
 
 
-COGNITO_POOL = '3fii107m4bmtggnm21pud2es21'
+COGNITO_POOL = "3fii107m4bmtggnm21pud2es21"
 
 
 def construct_cookies(
@@ -26,10 +26,10 @@ def construct_cookies(
     if email is None or auth_state is None or access_token is None:
         return {}
 
-    key = f'CognitoIdentityServiceProvider.{COGNITO_POOL}.{quote(email, safe="")}.accessToken'
+    key = f"CognitoIdentityServiceProvider.{COGNITO_POOL}.{quote(email, safe='')}.accessToken"
 
     return {
-        'auth_state': auth_state,
+        "auth_state": auth_state,
         key: access_token,
     }
 
@@ -68,4 +68,4 @@ class NetworkClient:
             if attempt < retries:
                 sleep(delay)
 
-        raise Persistent406Error(f'received 406 for {retries} attempts on {url}')
+        raise Persistent406Error(f"received 406 for {retries} attempts on {url}")

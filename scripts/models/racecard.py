@@ -94,4 +94,4 @@ class Racecard:
         return asdict(self)
 
     def to_json(self) -> str:
-        return dumps(self.to_dict()).decode('utf-8')
+        return dumps(self.to_dict()).decode("utf-8")

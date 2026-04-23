@@ -6,17 +6,24 @@ The aim of this tool is to provide a way of gathering large amounts of historica
 
 #### Table of Contents
 
-- [Requirements](#requirements)
-- [Install](#install)
-- [Examples](#examples)
-- [Scrape Racecards](#scrape-racecards)
-- [Settings](#settings)
-- [Authentication](#authentication)
-- [Tip Jar](#tip-jar)
+- [rpscrape](#rpscrape)
+      - [Table of Contents](#table-of-contents)
+    - [Requirements](#requirements)
+    - [Install](#install)
+      - [Command-Line Options](#command-line-options)
+        - [Notes](#notes)
+    - [Examples](#examples)
+        - [Date File Mode](#date-file-mode)
+        - [Searching](#searching)
+        - [Settings](#settings)
+  - [Scrape Racecards](#scrape-racecards)
+        - [Examples](#examples-1)
+        - [Settings](#settings-1)
+      - [Authentication](#authentication)
 
 ### Requirements
 
-You must have Python 3.13 or greater, and GIT installed. You can download the latest Python release [here](https://www.python.org/downloads/). You can download GIT [here](https://git-scm.com/downloads).
+You must have Python 3.13 or greater, [uv](https://docs.astral.sh/uv/getting-started/installation/), and GIT installed. You can download the latest Python release [here](https://www.python.org/downloads/). You can download GIT [here](https://git-scm.com/downloads).
 
 - [curl_cffi](https://pypi.org/project/curl-cffi/)
 - [jarowinkler](https://pypi.org/project/jarowinkler/)
@@ -26,16 +33,26 @@ You must have Python 3.13 or greater, and GIT installed. You can download the la
 - [tomli](https://pypi.org/project/tomli/)
 - [TQDM](https://pypi.org/project/tqdm/)
 
-The above Python modules are required, they can be installed using PIP(_included with Python_):
+The above Python modules are managed in `pyproject.toml` and installed with uv:
 
 ```
-pip3 install curl_cffi jarowinkler lxml orjson python-dotenv tomli tqdm
+uv sync
+```
+
+Install development tooling (pre-commit + ruff):
+
+```
+uv sync --extra dev
+uv run pre-commit install
+uv run pre-commit install --hook-type commit-msg
 ```
 
 ### Install
 
 ```
 git clone https://github.com/joenano/rpscrape.git
+cd rpscrape
+uv sync
 ```
 
 #### Command-Line Options
@@ -68,31 +85,31 @@ When scraping jumps data, the year refers to the season start. For example, the 
 All races on a specific date:
 
 ```
-./rpscrape.py -d 2020/10/01
+(cd scripts && uv run python rpscrape.py -d 2020/10/01)
 ```
 
 Only races from Great Britain:
 
 ```
-./rpscrape.py -d 2020/10/01 -r gb
+(cd scripts && uv run python rpscrape.py -d 2020/10/01 -r gb)
 ```
 
 Date range:
 
 ```
-./rpscrape.py -d 2019/12/15-2019/12/18
+(cd scripts && uv run python rpscrape.py -d 2019/12/15-2019/12/18)
 ```
 
 Flat races in Ireland (2019):
 
 ```
-./rpscrape.py -r ire -y 2019 -t flat
+(cd scripts && uv run python rpscrape.py -r ire -y 2019 -t flat)
 ```
 
 Jump races at Ascot (1999–2018):
 
 ```
-./rpscrape.py -c 2 -y 1999-2018 -t jumps
+(cd scripts && uv run python rpscrape.py -c 2 -y 1999-2018 -t jumps)
 ```
 
 ##### Date File Mode
@@ -100,7 +117,7 @@ Jump races at Ascot (1999–2018):
 Scrape using a file with dates:
 
 ```
-./rpscrape.py --date-file dates.txt
+(cd scripts && uv run python rpscrape.py --date-file dates.txt)
 ```
 
 one date per line, format: YYYY/MM/DD.
@@ -116,31 +133,31 @@ one date per line, format: YYYY/MM/DD.
 List all regions:
 
 ```
-./rpscrape.py --regions
+(cd scripts && uv run python rpscrape.py --regions)
 ```
 
 Search regions:
 
 ```
-./rpscrape.py --regions gb
+(cd scripts && uv run python rpscrape.py --regions gb)
 ```
 
 List all courses:
 
 ```
-./rpscrape.py --courses
+(cd scripts && uv run python rpscrape.py --courses)
 ```
 
 Search courses:
 
 ```
-./rpscrape.py --courses Ascot
+(cd scripts && uv run python rpscrape.py --courses Ascot)
 ```
 
 List courses in a region:
 
 ```
-./rpscrape.py --courses gb
+(cd scripts && uv run python rpscrape.py --courses gb)
 ```
 
 ##### Settings
@@ -158,25 +175,25 @@ There are only three parameter options, --day N, --days N where N is a number 1-
 Scrape today's racecards.
 
 ```
-./racecards.py --day 1
+(cd scripts && uv run python racecards.py --day 1)
 ```
 
 Scrape tomorrow's racecards.
 
 ```
-./racecards.py --day 2
+(cd scripts && uv run python racecards.py --day 2)
 ```
 
 Scrape today's and tomorrow's racecards.
 
 ```
-./racecards.py --days 2
+(cd scripts && uv run python racecards.py --days 2)
 ```
 
 Scrape today's and tomorrow's racecards by region.
 
 ```
-./racecards.py --days 2 --region gb
+(cd scripts && uv run python racecards.py --days 2 --region gb)
 ```
 
 ##### Settings
@@ -211,39 +228,3 @@ There will be multiple keys beginning with `CognitoIdentityServiceProvider`, you
 
 ![alt text](https://i.postimg.cc/FK41xJ3W/20260103-113009.png)
 ![alt text](https://i.postimg.cc/nLJM1QBg/20260103-113046.png)
-
-## Tip Jar
-
-This project has been maintained for years at no cost, and will continue to be, but if you found it valuable and would like to tip me, you can send to any of the following addresses.
-
----
-
-#### Nano (XNO)
-
-`nano_1cigm8i1hnhqhd7scd1hdfya8xxm7b7u8ar5zu5dtyhf5aedinmx3w3ghhfa`
-
----
-
-#### Monero (XMR)
-
-`86pjtDW83SDTE2AoQFxSBJPhT5H8WcSRkJUf74TcDzTLPZhJeeha9ZD2SStTxkdqWtTXr4hbKopx3GguYsKRywrUBavJ7Je`
-
----
-
-#### Bitcoin (BTC)
-
-`bc1q7ad36qq9zmw77h4dhl0q44hddlutfygz5z4sa3`
-
----
-
-#### Solana (SOL)
-
-`5zqqKsgC6ZF18cySJjaULxREPLzNFnuHrMfGohvuvFHb`
-
----
-
-#### Ethereum (ETH)
-
-`0x73b7207FDf50E4f6Fb444597f9C33be7E2baA0CE`
-
----

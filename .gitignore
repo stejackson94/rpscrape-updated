@@ -6,8 +6,8 @@ racecards/
 
 .idea/
 .vscode/
+.venv/
 __*/
 
 .DS_Store
 settings/user_settings.toml
-

@@ -1,0 +1,27 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 'v5.0.0'
+    hooks:
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-json
+      - id: pretty-format-json
+        args: [--autofix, --no-sort-keys]
+      - id: check-toml
+      - id: check-yaml
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 'v0.11.5'
+    hooks:
+      - id: ruff
+        args: [--exit-non-zero-on-fix, --config=pyproject.toml]
+      - id: ruff-format
+        args: [--config=pyproject.toml]
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: 'v4.2.0'
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
