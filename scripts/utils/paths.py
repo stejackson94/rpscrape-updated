@@ -30,7 +30,7 @@ def build_paths(
 ) -> Paths:
     project_root = Path(__file__).resolve().parents[2]
 
-    data_root = project_root / "data"
+    data_root = project_root / "results"
     cache_root = project_root / ".cache"
 
     ext = ".csv.gz" if gzip_output else ".csv"

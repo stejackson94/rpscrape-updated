@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 
 import argparse
+import csv
 import datetime
+import json
 import os
 import re
 import sys
@@ -40,6 +42,49 @@ RACE_TYPE = {
 }
 
 type Racecards = defaultdict[str, defaultdict[str, defaultdict[str, dict[str, Any]]]]
+
+
+def normalize_csv_value(value: Any) -> str | int | float | bool | None:
+    """Normalize values for CSV output, serializing nested structures as JSON strings."""
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, separators=(",", ":"))
+    return value
+
+
+def build_csv_rows(racecards: Racecards) -> list[dict[str, Any]]:
+    """Flatten racecards into runner-level CSV rows with race/runner prefixes."""
+    rows: list[dict[str, Any]] = []
+
+    for courses in racecards.values():
+        for races in courses.values():
+            for race in races.values():
+                race_fields = {
+                    f"race_{k}": normalize_csv_value(v)
+                    for k, v in race.items()
+                    if k != "runners"
+                }
+                for runner in race.get("runners", []):
+                    row = dict(race_fields)
+                    for key, value in runner.items():
+                        row[f"runner_{key}"] = normalize_csv_value(value)
+                    rows.append(row)
+
+    return rows
+
+
+def write_csv(path: str, rows: list[dict[str, Any]]) -> None:
+    """Write flattened rows to CSV while preserving field discovery order."""
+    fieldnames: list[str] = []
+    for row in rows:
+        for key in row:
+            if key not in fieldnames:
+                fieldnames.append(key)
+
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        if rows:
+            writer.writerows(rows)
 
 
 def load_field_config() -> dict[str, Any]:
@@ -538,6 +583,14 @@ def main() -> None:
         metavar="CODE",
     )
 
+    _ = parser.add_argument(
+        "--format",
+        choices=("json", "csv"),
+        default="json",
+        help="Output format for racecards (default: json).",
+        metavar="FMT",
+    )
+
     args = parser.parse_args()
 
     dates: list[str] = [
@@ -573,6 +626,11 @@ def main() -> None:
 
     for date in race_urls:
         racecards = scrape_racecards(race_urls, date, config, client)
+
+        if args.format == "csv":
+            rows = build_csv_rows(racecards)
+            write_csv(f"../racecards/{date}.csv", rows)
+            continue
 
         with open(f"../racecards/{date}.json", "w", encoding="utf-8") as f:
             _ = f.write(dumps(racecards).decode("utf-8"))
